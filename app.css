@@ -1,0 +1,55 @@
+header {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    height: 100px;
+    background-color: brown;
+}
+
+h1 {
+    font-family: 'Harry Potter';
+    src: url('http://www.fontsaddict.com/fontface/harry-potter.TTF');
+    color: gold;
+}
+
+
+main{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+button {
+    width: 100px;
+    align-self: center;
+    margin-top: 15px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* background for correct and incorect answers */
+.correct {
+    height: 960px;
+    background-color: green;
+}
+
+.correct button {
+    width: 150px;
+}
+
+.incorrect {
+    height: 960px;
+    background-color: red;
+}
+
+.incorrect button {
+    width: 150px;
+}
