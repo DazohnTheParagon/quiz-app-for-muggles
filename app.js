@@ -32,7 +32,7 @@ const store = {
             correctAnswer: 'Gryffindor'
         },
         {
-            question: 'What is the model of the first broom Harry ever receives? is the current year?',
+            question: 'What is the model of the first broom Harry ever receives?',
             answers: [
                 'Cleansweep One',
                 'Hoover',
@@ -46,8 +46,8 @@ const store = {
             answers: [
                 'Weasley Joke Emporium',
                 'Weasleys\’ Wizard Wheezes',
-                '2019',
-                '2005'
+                'Fred & George\’s Wonder Emporium',
+                'Zonko\’s Joke Shop'
             ],
             correctAnswer: 'Weasleys\’ Wizard Wheezes'
         }
@@ -57,27 +57,25 @@ const store = {
     score: 0
 };
 
-// Opening page to the quiz
-const openingPage = function () {
-    return `<h2>Welcome to the Harry Potter Quiz</h2>
-    <p>Start the quiz to test your Harry Potter knowledge!</p>
-    <button id="generate">Start Quiz</button>
-    `;
+
+// Generates questions or show results
+const handleQuiz = function () {
+    // if we have not reached the last question, gernerate next question
+    if (store.questionNumber <= 4) {
+        generateQuestion();
+    } else {
+        // if we are at the end, show results
+        results();
+    }
 }
-// Begins and generates quiz question
-const quizGenerator = function () {
-    // if (store.questionNumber <= 4) {
+
+const generateQuestion = function () {
     $('main').on('click', "#generate", function (event) {
         store.quizStarted = true;
         let question = questionTemp(store.questions, store.questionNumber);
         render(question);
         console.log(store.questions[store.questionNumber])
     })
-
-    // if we are at the end show the results
-    // } else {
-    //   null
-    // }
 }
 
 
@@ -95,60 +93,112 @@ const questionTemp = function (item, num) {
     for (let i = 0; i < item[num].answers.length; i++) {
         htmlOutput += `
         <div>
-            <input type="radio" id="${item[num].answers[i]}" name="answer" value="${item[num].answers[i]}">
-            <label for="${item[num].answers[i]}">${item[num].answers[i]}</label>
+        <input type="radio" id="${item[num].answers[i]}" name="answer" value="${item[num].answers[i]}" required>
+        <label for="${item[num].answers[i]}">${item[num].answers[i]}</label>
         </div>`
     }
 
-
     // add closing form and submit button to the output variable 
     htmlOutput += `
-        <button type="submit">Submit</button>
-        <p>${num + 1} of 5</p>
-      </form>`
+    <button type="submit">Submit</button>
+    <p>${num + 1} of 5</p>
+    </form>`
 
     // return the output variable for rendering 
     return htmlOutput
 }
 
-// compares the users answer to the answer key for result
+
+// Compares the users answer to the answer key for result
 const checkAnswer = function () {
     $('main').on('submit', "form", function (event) {
         event.preventDefault();
-        console.log(store.questionNumber);
-        let currentQuestion = store.question[store.questionNumber];
-        let answer = $('input[name=answer]:checkd').val();
-
+        let currentQuestion = store.questions[store.questionNumber];
+        let answer = $('input[name=answer]:checked').val()
+        console.log(store.questionNumber)
         // checks for the correct answer
-        if (currentQuestion === answer) {
-            store.correctAnswer += 1;
-            let showResult = `<div class="correct">
-          <h2>Your correct!</h2>
-          <p>Outstanding! You have answered ${store.checkAnswer} out of ${store.questionNumber + 1} correct so far.</p>
-          <button id="next">Next Question</button>
-        </div>`;
+        if (currentQuestion.correctAnswer === answer) {
+            store.score += 1;
+            render(congrats());
         } else {
-            let showResult = `<div class="incorrect">
-          <h2>Your incorrect!</h2>
-          <p>Sorry! You have answered ${store.checkAnswer} out of ${store.questionNumber + 1} correct so far.</p>
-          <button id="next">Next Question</button>
-        </div>`;
+            render(sorry());
         }
-        render(showResult);
+        store.questionNumber++;
+        console.log(store.questionNumber)
     });
 }
+
+// Shows quiz results
+const results = function () {
+    $('main').on('click', "#generate", function (event) {
+        event.preventDefault();
+        render(resultTemplate());
+    })
+}
+
+
+// Starts the quiz over
+const startOver = function () {
+    $('main').on('click', "#restart", function (event) {
+        store.quizStarted = false;
+        store.questionNumber = 0;
+        store.score = 0;
+        render(openingPage);
+    })
+}
+
+
+// Opening page to the quiz
+function openingPage() {
+    return `<h2>Welcome to the Harry Potter Quiz</h2>
+    <p>Start the quiz to test your Harry Potter knowledge!</p>
+    <button id="generate">Start Quiz</button>
+    `;
+}
+
+
+// Html template for the correct answer
+function congrats() {
+    return `<div class="correct">
+    <h2>You are correct!</h2>
+    <p>Outstanding! You have answered ${store.score} out of ${store.questionNumber + 1} correct so far.</p>
+    <button id="generate">Next</button>
+    </div>`;
+}
+
+
+// Html template for the wrong answer
+function sorry() {
+    return `<div class="incorrect">
+    <h2>You are incorrect!</h2>
+    <p>Sorry! You have answered ${store.score} out of ${store.questionNumber + 1} correct so far.</p>
+    <button id="generate">Next</button>
+  </div>`;
+}
+
+// Result html template
+function resultTemplate() {
+    return `<div>
+    <h2>Out of 5 questions:</h2>
+    <p>You've answered ${store.score} correct<br>and ${5 - store.score} incorrect.</p>
+    <button id="restart">Start Over</button>
+    </div>`;
+}
+
+
+
 
 
 // Render function
 const render = (html) => $('main').html(html);
 
-// Where all of our functions will be ran from
+// Where all of our functions will be ran
 function main() {
-    quizGenerator();
-    checkAnswer();
     let startPage = openingPage();
     render(startPage);
-
+    handleQuiz();
+    checkAnswer();
+    startOver();
 }
 
 $(main);

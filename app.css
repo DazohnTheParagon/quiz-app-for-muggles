@@ -17,39 +17,55 @@ main{
     display: flex;
     justify-content: center;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-    text-align: center;
+    height: 400px;
+    width: 800px;
+    max-width: 80%;
+    background-color: gray;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 2px;
     margin: 0 auto;
+    margin-top: 50px;
+    text-align: center;
+    font-family: 'Nunito', sans-serif;
 }
 
 button {
     width: 100px;
     align-self: center;
     margin-top: 15px;
+    border-radius: 5px;
 }
 
 form {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 10px;
 }
 
 /* background for correct and incorect answers */
 .correct {
-    height: 960px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background-color: green;
+    height: 100%;
 }
 
 .correct button {
-    width: 150px;
+    width: 100px;
+    border-radius: 5px;
 }
 
 .incorrect {
-    height: 960px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background-color: red;
+    height: 100%;
 }
 
 .incorrect button {
-    width: 150px;
+    width: 100px;
+    border-radius: 5px;
 }
