@@ -43,12 +43,13 @@ form {
     gap: 10px;
 }
 
-/* background for correct and incorect answers */
+/* background for correct*/
 .correct {
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: green;
+    border-radius: 10px;
     height: 100%;
 }
 
@@ -57,11 +58,13 @@ form {
     border-radius: 5px;
 }
 
+/* background for incorrect */
 .incorrect {
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: red;
+    border-radius: 10px;
     height: 100%;
 }
 

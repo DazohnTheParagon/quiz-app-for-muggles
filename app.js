@@ -58,23 +58,22 @@ const store = {
 };
 
 
-// Generates questions or show results
+// Starts the quiz and calls the question generator
 const handleQuiz = function () {
-    // if we have not reached the last question, gernerate next question
-    if (store.questionNumber <= 4) {
-        generateQuestion();
-    } else {
-        // if we are at the end, show results
-        results();
-    }
+    // start quiz
+    let startPage = openingPage();
+    render(startPage);
+    // gernerate next question
+    generateQuestion();
 }
 
+
+// Generates each question from the question template
 const generateQuestion = function () {
     $('main').on('click', "#generate", function (event) {
         store.quizStarted = true;
         let question = questionTemp(store.questions, store.questionNumber);
         render(question);
-        console.log(store.questions[store.questionNumber])
     })
 }
 
@@ -83,29 +82,34 @@ const generateQuestion = function () {
 // Template for each question
 const questionTemp = function (item, num) {
 
-    // output variable
-    let htmlOutput = `<p>${item[num].question}</p>`;
+    if (item[num]) {
+        // output variable
+        let htmlOutput = `<p>${item[num].question}</p>`;
 
-    // add the oppening form to the output variable
-    htmlOutput += `<form>`
+        // add the oppening form to the output variable
+        htmlOutput += `<form>`
 
-    // add each one of the answers to the form 
-    for (let i = 0; i < item[num].answers.length; i++) {
+        // add each one of the answers to the form 
+        for (let i = 0; i < item[num].answers.length; i++) {
+            htmlOutput += `
+            <div>
+            <input type="radio" id="${item[num].answers[i]}" name="answer" value="${item[num].answers[i]}" required>
+            <label for="${item[num].answers[i]}">${item[num].answers[i]}</label>
+            </div>`
+        }
+
+        // add closing form and submit button to the output variable 
         htmlOutput += `
-        <div>
-        <input type="radio" id="${item[num].answers[i]}" name="answer" value="${item[num].answers[i]}" required>
-        <label for="${item[num].answers[i]}">${item[num].answers[i]}</label>
-        </div>`
+        <button type="submit">Submit</button>
+        <p>${num + 1} of 5</p>
+        </form>`
+
+        // return the output variable for rendering 
+        return htmlOutput
+    } else {
+        // calls for the results
+        results();
     }
-
-    // add closing form and submit button to the output variable 
-    htmlOutput += `
-    <button type="submit">Submit</button>
-    <p>${num + 1} of 5</p>
-    </form>`
-
-    // return the output variable for rendering 
-    return htmlOutput
 }
 
 
@@ -124,14 +128,12 @@ const checkAnswer = function () {
             render(sorry());
         }
         store.questionNumber++;
-        console.log(store.questionNumber)
     });
 }
 
 // Shows quiz results
 const results = function () {
     $('main').on('click', "#generate", function (event) {
-        event.preventDefault();
         render(resultTemplate());
     })
 }
@@ -143,7 +145,7 @@ const startOver = function () {
         store.quizStarted = false;
         store.questionNumber = 0;
         store.score = 0;
-        render(openingPage);
+        handleQuiz();
     })
 }
 
@@ -194,8 +196,6 @@ const render = (html) => $('main').html(html);
 
 // Where all of our functions will be ran
 function main() {
-    let startPage = openingPage();
-    render(startPage);
     handleQuiz();
     checkAnswer();
     startOver();
